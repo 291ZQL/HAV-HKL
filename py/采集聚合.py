@@ -45,6 +45,7 @@ class Spider(Spider):
         's32': {'name': '🍃飘零', 'api': 'https://p2100.net/api.php/provide/vod'},
         's33': {'name': '🐾魔爪', 'api': 'https://mozhuazy.com/api.php/provide/vod'},
         's34': {'name': '📺魔都', 'api': 'https://www.mdzyapi.com/api.php/provide/vod'},
+        's35': {'name': '📺西瓜资源', 'api': 'https://caiji.xgzyapi.com/api.php/provide/vod/'},
     }
 
     headers = {
