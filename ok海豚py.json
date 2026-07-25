@@ -413,12 +413,6 @@
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/黄豆短剧.py"
 		},
 		{
-            "key": "hongguo",
-            "name": "🐬红果短剧.py",
-            "type": 3,
-            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/红果短剧.py"
-        },
-		{
 			"key": "djjh",
 			"name": "🐬短剧聚合.py",
 			"type": 3,
