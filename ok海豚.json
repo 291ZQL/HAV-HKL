@@ -1219,6 +1219,11 @@
             }
         },
 		{
+           "name": "爱奇艺无广告解析",
+           "type": 0,
+           "url": "https://www.iqiyizyjx.com/?url="
+        },
+		{
            "name": "789解析1",
            "type": 0,
            "url": "https://jiexi.789jiexi.icu:4433/?url="
