@@ -23,7 +23,7 @@ class Spider(Spider):
         's10': {'name': '大奶子资源', 'api': 'https://apidanaizi.com/api.php/provide/vod/'},
         's11': {'name': '搜av资源', 'api': 'https://api.souavzyw.net/api.php/provide/vod/'},
         's12': {'name': '奥斯卡资源', 'api': 'https://aosikazy1.com/api.php/provide/vod/'},
-        's13': {'name': '滴滴资源', 'api': 'https://api.ddapi.cc/api.php/provide/vod/'},
+        's13': {'name': '滴滴资源', 'api': 'https://api.ddapi.cc/api.php/provide/vod/at/json'},
         's14': {'name': '豆豆资源', 'api': 'https://api.douapi.cc/api.php/provide/vod/'},
         's15': {'name': '鲨鱼资源', 'api': 'https://shayuapi.com/api.php/provide/vod/'},
         's16': {'name': '辣椒资源', 'api': 'http://apilj.com/api.php/provide/vod/'},
