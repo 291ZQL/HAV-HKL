@@ -1,15 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-红果短剧 TVBox Python 源。
-
-extend 可填写播放桥地址，例如：
-  http://192.168.1.4:9979
-或 JSON：
-  {"bridge":"http://192.168.1.4:9979"}
-"""
-import json
-import re
 import sys
+import re
 import time
 from urllib.parse import quote, urlencode
 
