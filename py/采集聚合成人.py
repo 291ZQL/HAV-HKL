@@ -31,7 +31,7 @@ class Spider(Spider):
         's18': {'name': '155资源', 'api': 'https://155api.com/api.php/provide/vod/'},
         's19': {'name': '乐播资源', 'api': 'https://lbapi9.com/api.php/provide/vod/'},
         's20': {'name': '玉兔资源', 'api': 'https://apiyutu.com/api.php/provide/vod/'},
-        's21': {'name': '番号资源, 'api': 'http://fhapi9.com/api.php/provide/vod/'},
+        's21': {'name': '番号资源', 'api': 'http://fhapi9.com/api.php/provide/vod/'},
         's22': {'name': '精品X资源, 'api': 'https://www.jingpinx.com/api.php/provide/vod/'},
         's23': {'name': 'jkun资源, 'api': 'https://jkunzyapi.com/api.php/provide/vod/'},
     }
