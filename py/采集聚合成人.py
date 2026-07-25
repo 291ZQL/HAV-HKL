@@ -17,9 +17,8 @@ class Spider(Spider):
         's4': {'name': '番茄资源', 'api': 'https://fqzy.me//api.php/provide/vod/'},
         's5': {'name': '黑料资源', 'api': 'https://heiliaozyapi.com/api.php/seaxml/vod/'},
         's6': {'name': '黄色仓库', 'api': 'https://hsckzy.vip/api.php/provide/vod/'},
-        's7': {'name': '大地资源', 'api': 'https://dadiapi.com/apple_m3u8.php'},
-        's8': {'name': '奶香香资源', 'api': 'https://naixxzy.com/api.php/provide/vod/'},
-        's9': {'name': '桃花资源', 'api': 'https://thzy1.me/api.php/provide/vod/'},
+        's7': {'name': '奶香香资源', 'api': 'https://naixxzy.com/api.php/provide/vod/'},
+        's8': {'name': '桃花资源', 'api': 'https://thzy1.me/api.php/provide/vod/'},
     }
 
     headers = {
