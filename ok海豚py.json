@@ -137,6 +137,12 @@
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/布布追剧.py"
 		},
 		{
+			"key": "片库",
+			"name": "🐬片库.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/片库.py"
+		},
+		{
 			"key": "ddyy",
 			"name": "🐬低端影视.py",
 			"type": 3,
