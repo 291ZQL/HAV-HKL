@@ -431,6 +431,12 @@
            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/映像星球.py"
         },
 		{
+			"key": "cjjh",
+			"name": "🐬采集聚合.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/采集聚合.py"
+		},
+		{
 			"key": "fY",
 			"name": "🐬枫叶影院.py(关梯子使用)",
 			"type": 3,
