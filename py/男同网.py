@@ -100,8 +100,7 @@ class Spider(BaseSpider):
             {"type_id": "/videos/all/xiaolan", "type_name": "原创专区"},
             {"type_id": "/videos/all/20min", "type_name": "长片专区"},
             {"type_id": "/videos/all/10min", "type_name": "短片速看"},
-            {"type_id": "/posts/category/whbl", "type_name": "网红爆料"},
-            {"type_id": "/posts/category/zzzf", "type_name": "正装制服"},
+            {"type_id": "/videos/category/xrbj", "type_name": "薄肌鲜肉"},
         ]
         return self._class_cache
 
