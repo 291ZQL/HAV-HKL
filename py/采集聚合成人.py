@@ -35,15 +35,12 @@ class Spider(Spider):
         's22': {'name': '精品X资源', 'api': 'https://www.jingpinx.com/api.php/provide/vod/'},
         's23': {'name': 'jkun资源', 'api': 'https://jkunzyapi.com/api.php/provide/vod/'},
         's24': {'name': '湿乐园', 'api': 'https://xxavs.com/api.php/provide/vod/'},
-        's25': {'name': '无尽资源', 'api': 'https://api.wujinapi.net/api.php/provide/vod/'},
-        's26': {'name': '越南资源', 'api': 'https://www.vnzyz.com/api.php/provide/vod/'},
-        's27': {'name': '红桃视频', 'api': 'https://apidanaizi.com/api.php/provide/vod/'},
-        's28': {'name': '七天资源', 'api': 'https://8day.icu/api.php/provide/vod/at/json/'},
-        's29': {'name': '百万资源', 'api': 'https://api.bwzyz.com/api.php/provide/vod/at/json/'},
-        's30': {'name': '鸡坤资源', 'api': 'https://jkunzyapi.com/api.php/provide/vod/'},
-        's31': {'name': 'AIvin', 'api': 'http://lbapiby.com/api.php/provide/vod/'},
-        's32': {'name': 'lsb资源', 'api': 'https://apilsbzy1.com/api.php/provide/vod/'},
-        's33': {'name': '91麻豆', 'api': 'https://91md.me/api.php/provide/vod/'},
+        's25': {'name': '越南资源', 'api': 'https://www.vnzyz.com/api.php/provide/vod/'},
+        's26': {'name': '红桃视频', 'api': 'https://apidanaizi.com/api.php/provide/vod/'},
+        's27': {'name': '鸡坤资源', 'api': 'https://jkunzyapi.com/api.php/provide/vod/'},
+        's28': {'name': 'AIvin', 'api': 'http://lbapiby.com/api.php/provide/vod/'},
+        's29': {'name': 'lsb资源', 'api': 'https://apilsbzy1.com/api.php/provide/vod/'},
+        's30': {'name': '91麻豆', 'api': 'https://91md.me/api.php/provide/vod/'},
     }
 
     headers = {
