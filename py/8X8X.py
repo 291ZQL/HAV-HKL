@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# 8x8x官网: https://www.7xb38c.com/
+
 import sys,re,json,base64
 from urllib.parse import quote
 sys.path.append('..')
