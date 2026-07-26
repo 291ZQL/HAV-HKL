@@ -145,6 +145,13 @@
 			"changeable": 0
 		},
 		{
+			"key": "枫叶影院",
+			"name": "🐬枫叶影院.js(关梯)",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/jar_js/枫叶影院.js",
+			"changeable": 0
+		},
+		{
 			"key": "qqvm",
 			"name": "🐬千千影视.py(关梯)(羊壳观看)",
 			"type": 3,
