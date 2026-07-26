@@ -95,12 +95,13 @@ class Spider(BaseSpider):
         if self._class_cache:
             return self._class_cache
         self._class_cache = [
-            {"type_id": "/videos", "type_name": "精选影片"},
             {"type_id": "/videos/category/rhgv", "type_name": "日韩专区"},
             {"type_id": "/videos/category/omjd", "type_name": "欧美专区"},
             {"type_id": "/videos/all/xiaolan", "type_name": "原创专区"},
             {"type_id": "/videos/all/20min", "type_name": "长片专区"},
             {"type_id": "/videos/all/10min", "type_name": "短片速看"},
+            {"type_id": "/posts/category/whbl", "type_name": "网红爆料"},
+            {"type_id": "/posts/category/zzzf", "type_name": "正装制服"},
         ]
         return self._class_cache
 
