@@ -1,4 +1,4 @@
-午㊰劇場,#genre#
+午夜刷场,#genre#
 极限电影台,http://lc.aacalive.com:26789/i/ghjnvq5o/8c855fdf/index.m3u8
 🌲1️⃣台,http://lc.aacalive.com:26789/i/ghjnvq5o/8c85giea/index.m3u8
 🌲2️⃣台,http://lc.aacalive.com:26789/i/ghjnvq5o/8c85fsaf/index.m3u8
