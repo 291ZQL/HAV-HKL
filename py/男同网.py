@@ -101,6 +101,7 @@ class Spider(BaseSpider):
             {"type_id": "/videos/all/20min", "type_name": "长片专区"},
             {"type_id": "/videos/all/10min", "type_name": "短片速看"},
             {"type_id": "/videos/category/xrbj", "type_name": "薄肌鲜肉"},
+            {"type_id": "/videos/category/wtns", "type_name": "无套内射 "},
         ]
         return self._class_cache
 
