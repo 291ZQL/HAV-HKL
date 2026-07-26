@@ -95,6 +95,8 @@ class Spider(BaseSpider):
         if self._class_cache:
             return self._class_cache
         self._class_cache = [
+            {"type_id": "/videos/all/new", "type_name": "今日更新"},
+            {"type_id": "/videos/all/every", "type_name": "全站最热"},
             {"type_id": "/videos/category/rhgv", "type_name": "日韩专区"},
             {"type_id": "/videos/category/omjd", "type_name": "欧美专区"},
             {"type_id": "/videos/all/xiaolan", "type_name": "小蓝原创"},
