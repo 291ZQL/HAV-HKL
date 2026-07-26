@@ -229,14 +229,3 @@ class Spider(Spider):
 
     def manualVideoCheck(self):
         return False
-
-360AI翻译专家
-将当前网页翻译为：
-简体中文
-
-360翻译
-智能选择（AI专家）
-双语对照
-仅译文
-翻译
-自动翻译此网站
