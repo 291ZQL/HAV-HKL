@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # //@name:BadNews直播放
 # //@id:badnews_direct
-# //@version:6
+# //@version:7
 
 import hashlib
 import html as html_lib
@@ -549,7 +549,12 @@ class Spider(BaseSpider):
         if len(self._proxy_manifests) > 16:
             oldest = min(self._proxy_manifests, key=lambda key: self._proxy_manifests[key][0])
             self._proxy_manifests.pop(oldest, None)
-        return "%s?siteKey=badnews&token=%s" % (self._proxy_base_url(), token)
+        site_key = quote(str(getattr(self, "siteKey", "") or "badnews"), safe="")
+        return "%s?siteKey=%s&token=%s" % (
+            self._proxy_base_url(),
+            site_key,
+            token,
+        )
 
     def _request_media_text(self, url):
         if not self._is_allowed_media_url(url) or self._media_type(url) != "m3u8":
