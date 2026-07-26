@@ -584,12 +584,7 @@
 			"key": "猫咪TV",
 			"name": "🐬猫咪TV.py｜🔞",
 			"type": 3,
-			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/猫咪TV.py",
-			"searchable": 1,
-            "quickSearch": 1,
-            "filterable": 1,
-            "changeable": 1,
-            "playable": 1
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/猫咪TV.py"
 		},
 		{
 			"key": "樱花传媒",
