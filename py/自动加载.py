@@ -22,12 +22,23 @@ class Spider(Spider):
 
     # 🔒 锁定在 sites 第 0、1 位的配置，无论扫描结果如何始终存在
     _LOCKED_SITES = [
-        {
-            "key": "FishConfig",
-            "name": "🍼┆设置┆中心[工具]",
+       {
+            "name": "弹幕",
+            "key": "弹幕豆瓣",
             "type": 3,
-            "api": "csp_FishConfig"
-        },
+            "api": "csp_SecureDanmu",
+            "searchable": 1,
+            "jar": "https://ghfast.top/https://raw.githubusercontent.com/goodcommunication/mydm/main/danmu-spider-native.jar",
+            "ext": {
+            "apiUrls": [
+            "https://danmu.iyo.us.ci/theft-dastardly-prognosis-hula-agenda2-dropkick|公益源",
+            "https://logo.saodu.work:8888/87654321|公益源1",
+            "https://dm.ljiaovm.com/luosen|公益源2"
+            ],
+            "titleMappingsUrl": "https://ghfast.top/https://raw.githubusercontent.com/goodcommunication/mydm/main/yins.json",
+            "filter": "./lib/douban.json"
+         }
+		},
         {
             "key": "Local",
             "name": "📁┆文件┆浏览[工具]",
