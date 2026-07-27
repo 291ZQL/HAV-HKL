@@ -40,18 +40,11 @@ class Spider(Spider):
          }
 		},
         {
-            "key": "Local",
-            "name": "📁┆文件┆浏览[工具]",
-            "type": 3,
-            "api": "csp_Local",
-            "searchable": 0,
-            "changeable": 0,
-            "indexs": 0,
-            "style": {
-                "type": "list"
-            },
-            "ext": "https://6800.kstore.vip/share.json"
-        }
+           "key": "MGtv",
+           "name": "🐬芒果TV.py",
+           "type": 3,
+           "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/芒果TV.py"
+       }
     ]
     _LOCKED_KEYS = {"FishConfig", "Local"}
     # ==========================================================================
