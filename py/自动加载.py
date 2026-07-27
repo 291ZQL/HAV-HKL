@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-# @tvbox-role manager
-# @version v2.0
-# @author 江 晚枫
-# @signature 秋色正好，江 晚枫来过。
-"""
-TVBox 本地多目录源手动扫描器 v2.0（安全优化版）
-=========================================
 
 用途：
 1. 扫描明确配置的 PY / JS / CSP / XBPQ / HTML 目录。
