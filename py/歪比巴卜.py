@@ -364,16 +364,6 @@ def quick_search(keyword):
     else:
         print("  ⚠ 无可用播放源")
 
-
-# ==================== 主入口 ====================
-if __name__ == "__main__":
-    print("""
-╔═══════════════════════════════════════════╗
-║         OK影视 - 歪比巴卜影视            ║
-║         https://wbbb1.com                 ║
-╚═══════════════════════════════════════════╝
-""")
-    
     if len(sys.argv) > 1:
         keyword = " ".join(sys.argv[1:])
         quick_search(keyword)
