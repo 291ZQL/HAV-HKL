@@ -14,11 +14,11 @@ class Spider(Spider):
     # ==========================================================================
     # 📂 【配置区】
     # ==========================================================================
-    PY_DIR    = "/storage/emulated/0/TV/小百合/py"
-    JS_DIR    = "/storage/emulated/0/TV/小百合/js"
-    JAR_DIR   = "/storage/emulated/0/TV/小百合/jar"
-    SAVE_PATH = "/storage/emulated/0/TV/小百合/自动接口.json"
-    LOGO_PATH = "/storage/emulated/0/TV/小百合/jar/头像.gif"
+    PY_DIR    = "/storage/emulated/0/TV/海豚/py"
+    JS_DIR    = "/storage/emulated/0/TV/海豚/js"
+    JAR_DIR   = "/storage/emulated/0/TV/海豚/jar"
+    SAVE_PATH = "/storage/emulated/0/TV/海豚/自动接口.json"
+    LOGO_PATH = "/https://img.freepik.com/free-vector/cute-dolphin-swimming-cartoon-vector-icon-illustration-animal-nature-icon-isolated-flat-vector_138676-12582.jpg?semt=ais_hybrid&w=740&q=80"
 
     # 🔒 锁定在 sites 第 0、1 位的配置，无论扫描结果如何始终存在
     _LOCKED_SITES = [
