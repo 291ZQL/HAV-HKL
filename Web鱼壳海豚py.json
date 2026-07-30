@@ -389,12 +389,6 @@
 			"type": 3,
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/采集聚合.py"
 		},
-         {
-			"key": "fY",
-			"name": "🐬枫叶影院.py(关梯)[追剧]",
-			"type": 3,
-			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/枫叶影院.py"
-		}, 
 		{
 			"key": "MiFun",
 			"name": "🐬MiFun动漫.py[动漫]",
