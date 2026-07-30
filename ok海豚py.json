@@ -46,12 +46,6 @@
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/油管.py"
 		},
 		{
-			"key": "喜福网",
-			"name": "🐬喜福网.py",
-			"type": 3,
-			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/喜福网.py"
-		},
-		{
 			"key": "视觉影院",
 			"name": "🐬视觉影院.py",
 			"type": 3,
@@ -429,6 +423,12 @@
 			"name": "🐬MiFun动漫.py",
 			"type": 3,
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/MiFun动漫.py"
+		},
+		{
+			"key": "喜福网",
+			"name": "🐬喜福短剧.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/喜福短剧.py"
 		},
 		{
 			"key": "smdj",
