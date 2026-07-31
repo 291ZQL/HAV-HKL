@@ -29,6 +29,10 @@ class Spider(BaseSpider):
     host = 'https://www.ddmf.net'
 
     CATEGORY_MAP = {
+        '1': '电影',
+        '2': '电视剧',
+        '4': '动漫',
+        '3': '综艺',
         '5': '福利视频',
         '37': '海外抖音',
     }
