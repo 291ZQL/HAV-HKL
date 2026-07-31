@@ -29,6 +29,12 @@
           "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/优酷视频.py"
         },
 		{
+            "key": "自动加载",
+             "name": "🐬自动加载",
+             "type": 3,
+             "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/自动加载.py"
+        },
+		{
 			"key": "kf",
 			"name": "🐬咖啡体育直播.py[直播]",
 			"type": 3,
