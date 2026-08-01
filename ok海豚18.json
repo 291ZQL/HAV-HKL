@@ -4,27 +4,15 @@
     "wallpaper":"http://tool.teyonds.com/api",
     "warningText": "注意:如果别人倒卖海豚影视接口收费的都是骗子,没有qq群微信群，只有tg官方交流群 TG：@hshsjk",
     "sites": [
-        {
-          "key": "YK",
-          "name": "🐬优酷视频.py 海豚影视完全免费，如有收费的都是骗子",
-          "type": 3,
-          "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/优酷视频.py"
-        },
-         {"key":"YK",
-        "name":"🐬优酷视频 海豚影视交流群 TG：@hshsjk9",
-        "type":3,
-        "api":"https://file.icve.com.cn/file_doc/249/899/3E7E0C8A023B624CEC6BDCC200F06F02.js",
-        "ext":"https://cdn.waimaimingtang.com/file/images/bwc/20251023002200-507c3e8aae.js"
-        },
 		{
 			"key": "UVOD",
-			"name": "🐬优视频.py 有🔞",
+			"name": "🐬优视频.py 有🔞海豚影视完全免费，如有收费的都是骗子",
 			"type": 3,
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/优视频.py"
 		},
 		{
            "key": "xyzkk",
-           "name": "🐬小鸭子看看.py 有🔞",
+           "name": "🐬小鸭子看看.py 有🔞海豚影视交流群 TG：@hshsjk9",
            "type": 3,
            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/小鸭子看看.py"
         },
