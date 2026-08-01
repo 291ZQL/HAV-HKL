@@ -16,7 +16,13 @@
            "type": 3,
            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/小鸭子看看.py"
         },
-		{"key": "aidan", "name": "🐬[伦理]艾旦影视🔞", "type": 1, "api": "https://lovedan.net/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
+		{
+			"key": "艾旦影视",
+			"name": "🐬[伦理]艾旦影视.py｜🔞",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/艾旦影视🔞.py"
+		},
+		{"key": "aidan", "name": "🐬[伦理]艾旦影视采集🔞", "type": 1, "api": "https://lovedan.net/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
         {"key": "U酷資源", "name": "🐬[伦理]U酷資源🔞", "type": 1, "api": "https://api.ukuapi.com/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
 		{"key": "虎牙资源", "name": "🐬[伦理]虎牙资源🔞", "type": 1, "api": "https://www.huyaapi.com/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
 		{"key": "ttzy", "name": "🐬[伦理]天天影视🔞", "type": 1, "api": "https://api.1080zyku.com/inc/apijson.php", "searchable": 1, "quickSearch": 1, "filterable": 1},
@@ -161,12 +167,6 @@
 			"name": "🐬[成人]午夜福利.py(羊壳观看)｜🔞",
 			"type": 3,
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/午夜福利羊壳版.py"
-		},
-		{
-			"key": "艾旦影视",
-			"name": "🐬[成人]艾旦影视.py｜🔞",
-			"type": 3,
-			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/艾旦影视🔞.py"
 		},
 		{
 			"key": "手鸡助手",
