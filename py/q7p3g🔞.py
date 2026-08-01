@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# q7p3g https://www.q7p3g.top/index/home.html
-
 import sys,re,json,html as hmod,base64,subprocess
 from urllib.parse import quote,unquote,urljoin
 sys.path.append('..')
