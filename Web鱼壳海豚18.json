@@ -22,7 +22,13 @@
            "type": 3,
            "api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/小鸭子看看.py"
         },
-		{"key": "aidan", "name": "🐬艾旦影视[伦理]", "type": 1, "api": "https://lovedan.net/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
+		{
+			"key": "艾旦影视",
+			"name": "🐬艾旦影视.py｜🔞[伦理]",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/艾旦影视🔞.py"
+		},
+		{"key": "aidan", "name": "🐬艾旦影视采集[伦理]", "type": 1, "api": "https://lovedan.net/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
         {"key": "U酷資源", "name": "🐬U酷資源🔞[伦理]", "type": 1, "api": "https://api.ukuapi.com/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
 		{"key": "虎牙资源", "name": "🐬虎牙资源🔞[伦理]", "type": 1, "api": "https://www.huyaapi.com/api.php/provide/vod/", "searchable": 1, "quickSearch": 1, "filterable": 1},
 		{"key": "ttzy", "name": "🐬天天影视🔞[伦理]", "type": 1, "api": "https://api.1080zyku.com/inc/apijson.php", "searchable": 1, "quickSearch": 1, "filterable": 1},
