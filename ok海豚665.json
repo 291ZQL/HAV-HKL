@@ -451,26 +451,6 @@
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/采集聚合.py"
 		},
 		{
-             "key": "奇妙",
-             "name": "[追剧]奇妙资源",
-             "type": 1,
-              "api": "https://cj.jusj.top/api.php/provide/vod/",
-              "searchable": 1,
-              "changeable": 1,
-              "playerType": 2,
-              "categories": [
-              "电影",
-              "剧集",
-              "综艺",
-              "动漫",
-              "短剧",
-               "少儿",
-              "纪录片"
-              ],
-              "quickSearch": 1,
-             "filterable": 1
-        },
-		{
             "key": "API_如意",
             "name": "🐬[追剧]如意影视",
             "type": 1,
