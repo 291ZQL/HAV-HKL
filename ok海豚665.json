@@ -140,6 +140,12 @@
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/可可影视.py"
 		},
 		{
+			"key": "豆花影视",
+			"name": "🐬[追剧]豆花影视.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/豆花影视.py"
+		},
+		{
 			"key": "拾光影视",
 			"name": "🐬[追剧]拾光影视.js",
 			"type": 3,
