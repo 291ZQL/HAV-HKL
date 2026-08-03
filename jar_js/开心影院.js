@@ -41,8 +41,8 @@ const OrderByFilter = {
     "value": [
         { "n": "默认排序", "v": "" },
         { "n": "更新时间", "v": "time" },
-        { "n": "近期热门", "v": "hits week" },
-        { "n": "豆瓣评分", "v": "douban score" }
+        { "n": "近期热门", "v": "hits_week" },
+        { "n": "豆瓣评分", "v": "douban_score" }
     ]
 }
 function getFilter() {
