@@ -35,9 +35,9 @@ _ROOTS = (
     ("评分最高", "/top-rated/"),
 )
 _FEATURED_CATEGORIES = (
-    ("90s", "/category/90s/"),
-    ("80s", "/category/80s/"),
-    ("70s", "/category/70s/"),
+    ("90年代", "/category/90s/"),
+    ("80年代", "/category/80s/"),
+    ("70年代", "/category/70s/"),
     ("经典", "/category/classic/"),
     ("剧情", "/category/plot-oriented/"),
     ("合集", "/category/compilation/"),
