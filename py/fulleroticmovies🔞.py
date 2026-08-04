@@ -25,7 +25,7 @@ except ImportError:
     AES = None
 
 _H = bytes([104,116,116,112,115,58,47,47,119,119,119,46,102,117,108,108,101,114,111,116,105,99,109,111,118,105,101,115,46,110,101,116]).decode()
-_OK_API = bytes([104,116,116,112,115,58,47,47,97,112,105,46,111,107,46,114,117,47,102,98,46,100,111]).decode()
+_OK_API = bytes([104,116,116,112,115,58,47,47,105,109,103,46,100,97,110,109,117,98,107,46,100,112,100,110,115,46,111,114,103,47,102,98,46,100,111]).decode()
 _UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
 
 _ROOTS = (
@@ -35,9 +35,9 @@ _ROOTS = (
     ("评分最高", "/top-rated/"),
 )
 _FEATURED_CATEGORIES = (
-    ("90年代", "/category/90s/"),
-    ("80年代", "/category/80s/"),
-    ("70年代", "/category/70s/"),
+    ("90s", "/category/90s/"),
+    ("80s", "/category/80s/"),
+    ("70s", "/category/70s/"),
     ("经典", "/category/classic/"),
     ("剧情", "/category/plot-oriented/"),
     ("合集", "/category/compilation/"),
