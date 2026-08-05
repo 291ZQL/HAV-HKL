@@ -30,9 +30,6 @@ except ImportError:
 
 __all__ = ["Spider"]
 
-# ═══════════════════════════════════════════════════
-# 常量
-# ═══════════════════════════════════════════════════
 _HOST = "https://bh5873.top"
 _API = _HOST + "/api"
 _AES_KEY = bytes([0xf6, 0x32, 0x2f, 0xa1, 0xc0, 0x64, 0x37, 0x0e, 0xa4, 0x0c, 0x8c, 0xdc, 0x20, 0x64, 0x9f, 0x8e])
@@ -65,10 +62,6 @@ class Spider(BaseSpider):
     def manualVideoCheck(self):
         return False
 
-    # ═══════════════════════════════════════════════════
-    # AES-128-CBC 解密
-    # ═══════════════════════════════════════════════════
-
     def _aes_decrypt(self, hex_data):
         try:
             raw = bytes.fromhex(hex_data)
@@ -80,10 +73,6 @@ class Spider(BaseSpider):
             return pt.decode("utf-8")
         except Exception:
             return ""
-
-    # ═══════════════════════════════════════════════════
-    # API请求封装 (自动解密)
-    # ═══════════════════════════════════════════════════
 
     def _api(self, path, params=None, method="GET", body=None):
         url = _API + path
@@ -109,10 +98,6 @@ class Spider(BaseSpider):
         except Exception:
             return {}
 
-    # ═══════════════════════════════════════════════════
-    # 图片代理URL生成
-    # ═══════════════════════════════════════════════════
-
     def _image_proxy_url(self, raw_url):
         if not raw_url or not isinstance(raw_url, str):
             return ""
@@ -125,10 +110,6 @@ class Spider(BaseSpider):
             proxy_base = "http://127.0.0.1:9980/proxy?do=py"
         sep = "&" if "?" in proxy_base else "?"
         return proxy_base + sep + "type=bh_img&url=" + quote(encoded, safe="")
-
-    # ═══════════════════════════════════════════════════
-    # 视频项构建
-    # ═══════════════════════════════════════════════════
 
     def _clean_title(self, text):
         if not text:
@@ -144,10 +125,6 @@ class Spider(BaseSpider):
             "vod_pic": self._image_proxy_url(item.get("vodPic", "")),
             "vod_remarks": item.get("rating", ""),
         }
-
-    # ═══════════════════════════════════════════════════
-    # 首页
-    # ═══════════════════════════════════════════════════
 
     _CLASS_IDS = [
         "推荐", "最新", "国产精品", "黑丝巨乳", "学生空姐", "人妻少妇",
@@ -175,10 +152,6 @@ class Spider(BaseSpider):
             for item in data:
                 vods.append(self._make_item(item))
         return {"list": vods}
-
-    # ═══════════════════════════════════════════════════
-    # 分类
-    # ═══════════════════════════════════════════════════
 
     def categoryContent(self, tid, pg=1, filter=False, extend=None):
         page = max(1, int(pg))
@@ -256,10 +229,6 @@ class Spider(BaseSpider):
             "total": len(items),
         }
 
-    # ═══════════════════════════════════════════════════
-    # 详情
-    # ═══════════════════════════════════════════════════
-
     def detailContent(self, ids):
         vod_id = str(ids[0]) if ids else ""
         if not vod_id:
@@ -303,10 +272,6 @@ class Spider(BaseSpider):
             "vod_play_url": "$$$".join(vod_play_url),
         }]}
 
-    # ═══════════════════════════════════════════════════
-    # 播放
-    # ═══════════════════════════════════════════════════
-
     def playerContent(self, flag, id, vipFlags=None):
         url = unquote(str(id))
 
@@ -341,10 +306,6 @@ class Spider(BaseSpider):
         # 非直链，交给TVBox webview解析
         return {"parse": 1, "playUrl": "", "url": url, "header": hdr}
 
-    # ═══════════════════════════════════════════════════
-    # 搜索
-    # ═══════════════════════════════════════════════════
-
     def searchContent(self, key, quick=False, pg=1):
         page = max(1, int(pg))
         data = self._api("/vod/search", {"keyword": key, "page": page})
@@ -359,10 +320,6 @@ class Spider(BaseSpider):
             "limit": 20,
             "total": data.get("total", 0) if isinstance(data, dict) else len(items),
         }
-
-    # ═══════════════════════════════════════════════════
-    # 本地代理 (图片解密)
-    # ═══════════════════════════════════════════════════
 
     def localProxy(self, param):
         try:
