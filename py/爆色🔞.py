@@ -84,6 +84,7 @@ class Spider(BaseSpider):
     def localProxy(self, param):
         return [404, 'text/plain', '']
 
+    # ---------- HTTP ----------
     def _http_get(self, url, timeout=20, retries=2):
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
@@ -113,7 +114,9 @@ class Spider(BaseSpider):
     def _fetch(self, url):
         return self._http_get(url)
 
+    @staticmethod
     def _decrypt_data_url(encoded):
+        """解密 data-url: atob(reverse(base64))"""
         try:
             s = encoded[::-1]
             pad = len(s) % 4
@@ -152,6 +155,7 @@ class Spider(BaseSpider):
             })
         return items
 
+    # ---------- 首页 ----------
     def homeContent(self, filter):
         try:
             classes = [{'type_id': str(cid), 'type_name': name} for cid, name, _ in self._CATS]
@@ -167,6 +171,7 @@ class Spider(BaseSpider):
         except Exception:
             return {'list': []}
 
+    # ---------- 分类 ----------
     def categoryContent(self, tid, pg, filter, extend):
         try:
             path = self._CAT_MAP.get(str(tid), 'video')
@@ -176,12 +181,14 @@ class Spider(BaseSpider):
                 url = f'{self.host}/{path}/page/{pg}'
             html = self._fetch(url)
             items = self._parse_cards(html)
+
             max_pg = 1
             for p in re.findall(r'/page/(\d+)', html):
                 try:
                     max_pg = max(max_pg, int(p))
                 except Exception:
                     pass
+
             return {
                 'page': int(pg) if pg else 1,
                 'pagecount': max_pg,
@@ -192,29 +199,37 @@ class Spider(BaseSpider):
         except Exception:
             return {'page': 1, 'pagecount': 1, 'limit': 16, 'total': 0, 'list': []}
 
+    # ---------- 详情 ----------
     def detailContent(self, ids):
         try:
             did = str(ids[0] if isinstance(ids, list) else ids)
             html = self._fetch(f'{self.host}/video/{did}')
+
             title = ''
             m = re.search(r'<h1[^>]*>([^<]+)</h1>', html)
             if m:
                 title = m.group(1).strip()
+
             pic = ''
             m = re.search(r'<meta property="og:image" content="([^"]+)"', html)
             if m:
                 pic = m.group(1)
+
             play_url = ''
             m = re.search(r'data-url="([^"]+)"', html)
             if m:
                 play_url = self._decrypt_data_url(m.group(1))
+
             tags = re.findall(r'href="/tag/[^"]+"[^>]*>#([^<]+)</a>', html)
             tag_str = '、'.join(tags[:8]) if tags else ''
+
             content = title or ''
             if tag_str:
                 content += f'\n\n标签: {tag_str}'
+
             if not play_url:
                 return {'list': []}
+
             return {'list': [{
                 'vod_id': did,
                 'vod_name': title or did,
@@ -227,6 +242,7 @@ class Spider(BaseSpider):
         except Exception:
             return {'list': []}
 
+    # ---------- 搜索 ----------
     def searchContent(self, key, quick, pg=1):
         try:
             url = f'{self.host}/search?q={quote(key)}'
@@ -238,6 +254,7 @@ class Spider(BaseSpider):
         except Exception:
             return {'list': [], 'page': 1, 'pagecount': 1}
 
+    # ---------- 播放 ----------
     def playerContent(self, flag, id, vipFlags=None):
         return {
             'parse': 0,
