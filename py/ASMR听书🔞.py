@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-# ASMR MOON (asmrmoon.com) 免费音声站 Python Spider
-
+# ASMR Online (asmr.one) 音声站 Python Spider
 
 import json
-import re
+import time
 
 try:
     from base.spider import Spider as BaseSpider
@@ -16,24 +15,37 @@ try:
 except ImportError:
     requests = None
 
-HOST = "https://asmrmoon.com"
+API_BASES = [
+    "https://api.asmr.one",
+    "https://api.asmr-100.com",
+    "https://api.asmr-200.com",
+    "https://api.asmr-300.com",
+]
 UA = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
 )
-AUDIO_EXTS = (".mp3", ".m4a", ".wav", ".aac", ".flac", ".ogg")
-VIDEO_EXTS = (".m3u8", ".mp4", ".ts")
+
+# 排序分类：tid = order 值
+ORDERS = [
+    ("create_date", "最新"),
+    ("release", "新发"),
+    ("dl_count", "最热"),
+    ("rate_average_2dp", "高分"),
+    ("review_count", "热议"),
+]
 
 
 class Spider(BaseSpider):
     def init(self, extend=""):
-        self.host = (extend or HOST).strip().rstrip("/")
+        # extend 可指定 API 域名，例如 extend=https://api.asmr.one
+        self.api = (extend or API_BASES[0]).strip().rstrip("/")
         self.session = requests.Session() if requests else None
         if self.session:
             self.session.headers = {
                 "User-Agent": UA,
-                "Content-Type": "application/json",
                 "Accept": "application/json",
+                "Referer": "https://www.asmr.one/",
             }
 
     def __init__(self):
@@ -44,145 +56,138 @@ class Spider(BaseSpider):
         self.init()
 
     def getName(self):
-        return "ASMR MOON"
+        return "ASMR音声"
 
-    def _post(self, api, body):
+    # ─────────────────────────── 基础 ───────────────────────────
+
+    def _get(self, path):
         if not self.session:
             return {}
         try:
-            r = self.session.post(self.host + api, json=body, timeout=25)
+            r = self.session.get(self.api + path, timeout=20)
             if r.status_code != 200:
                 return {}
             return r.json()
         except Exception:
             return {}
 
-    def _list(self, path, page=1, per_page=1000):
-        d = self._post("/api/fs/list", {
-            "path": path, "password": "",
-            "page": page, "per_page": per_page,
-            "refresh": False, "force_global_name_sort": False,
-        })
-        return (d.get("data") or {}).get("content") or []
+    @staticmethod
+    def _clean_title(t):
+        return (t or "").replace("【", "[").replace("】", "]").replace("$", "").replace("#", "")
 
-    def _is_media(name):
-        n = name.lower()
-        return n.endswith(AUDIO_EXTS) or n.endswith(VIDEO_EXTS)
+    @staticmethod
+    def _remark(w):
+        parts = []
+        if w.get("dl_count") is not None:
+            parts.append("%dDL" % w.get("dl_count", 0))
+        if w.get("price") is not None:
+            parts.append("¥%d" % w.get("price", 0))
+        if w.get("duration"):
+            parts.append(str(w.get("duration")))
+        return " ".join(parts)
 
-    def _collect_files(self, path, depth=0):
+    def _rows_to_vods(self, rows):
         out = []
-        try:
-            items = self._list(path)
-        except Exception:
-            return out
-        for it in items:
-            name = it.get("name") or ""
-            full = (path.rstrip("/") + "/" + name).replace("//", "/")
-            if it.get("is_dir"):
-                if depth < 3:
-                    out.extend(self._collect_files(full, depth + 1))
-            elif self._is_media(name):
-                out.append({"name": name, "path": full, "size": it.get("size", 0)})
+        for w in rows or []:
+            wid = str(w.get("id") or "")
+            if not wid:
+                continue
+            out.append({
+                "vod_id": wid,
+                "vod_name": self._clean_title(w.get("title")),
+                "vod_pic": w.get("mainCoverUrl") or w.get("samCoverUrl") or "",
+                "vod_remarks": self._remark(w),
+            })
         return out
 
+    # ─────────────────────────── TVBox 契约 ───────────────────────────
+
     def homeContent(self, filter=False):
-        items = self._list("/")
-        classes = []
-        for it in items:
-            if not it.get("is_dir"):
-                continue
-            name = it.get("name") or ""
-            if name in ("使用说明", ".git", "@eaDir"):
-                continue
-            classes.append({"type_id": "/" + name, "type_name": name})
-        lst = []
-        if classes:
-            creators = self._list(classes[0]["type_id"])
-            for c in creators:
-                if c.get("is_dir"):
-                    nm = c.get("name") or ""
-                    lst.append({
-                        "vod_id": classes[0]["type_id"] + "/" + nm,
-                        "vod_name": nm,
-                        "vod_pic": "",
-                        "vod_remarks": "创作者",
-                    })
-        return {"class": classes, "list": lst}
+        classes = [{"type_id": o, "type_name": n} for o, n in ORDERS]
+        d = self._get("/api/works?order=create_date&sort=desc&page=1&pageSize=20")
+        rows = d.get("works") if isinstance(d, dict) else []
+        return {"class": classes, "list": self._rows_to_vods(rows)}
 
     def homeVideoContent(self):
-        h = self.homeContent()
-        return {"list": h.get("list", [])}
+        d = self._get("/api/works?order=create_date&sort=desc&page=1&pageSize=20")
+        rows = d.get("works") if isinstance(d, dict) else []
+        return {"list": self._rows_to_vods(rows)}
 
     def categoryContent(self, tid, pg=1, filter=False, extend=None):
-        items = self._list(tid, page=int(pg), per_page=100)
-        lst = []
-        for it in items:
-            if not it.get("is_dir"):
-                continue
-            nm = it.get("name") or ""
-            lst.append({
-                "vod_id": (tid.rstrip("/") + "/" + nm).replace("//", "/"),
-                "vod_name": nm,
-                "vod_pic": "",
-                "vod_remarks": "创作者",
-            })
-        return {"list": lst, "page": int(pg), "pagecount": 9999}
+        order = tid if tid in dict(ORDERS) else "create_date"
+        d = self._get("/api/works?order=%s&sort=desc&page=%d&pageSize=20" % (order, int(pg)))
+        rows = d.get("works") if isinstance(d, dict) else []
+        return {"list": self._rows_to_vods(rows), "page": int(pg), "pagecount": 9999}
 
     def searchContent(self, key, quick=False, pg="1"):
-        d = self._post("/api/fs/search", {
-            "parent": "/", "keywords": key, "scope": 0,
-            "page": int(pg), "per_page": 50, "password": "",
-        })
-        content = (d.get("data") or {}).get("content") or []
-        lst = []
-        for it in content:
-            name = it.get("name") or ""
-            parent = it.get("parent") or ""
-            if it.get("is_dir") or not self._is_media(name):
-                continue
-            full = (parent.rstrip("/") + "/" + name).replace("//", "/")
-            lst.append({
-                "vod_id": full,
-                "vod_name": name,
-                "vod_pic": "",
-                "vod_remarks": parent,
-            })
-        return {"list": lst}
+        import urllib.parse
+        kw = urllib.parse.quote(key)
+        d = self._get("/api/search/%s?order=create_date&sort=desc&page=%s&pageSize=20" % (kw, pg))
+        rows = d.get("works") if isinstance(d, dict) else []
+        return {"list": self._rows_to_vods(rows)}
 
     def detailContent(self, ids):
         vid = str(ids[0] if isinstance(ids, list) else ids)
-        if self._is_media(vid.split("/")[-1]):
-            name = vid.split("/")[-1]
-            vod = {
-                "vod_id": vid,
-                "vod_name": name,
-                "vod_pic": "",
-                "vod_play_from": "ASMR",
-                "vod_play_url": "1 %s$%s" % (name, vid),
-            }
-            return {"list": [vod]}
-        files = self._collect_files(vid)
-        if not files:
+        d = self._get("/api/work/" + vid)
+        if not isinstance(d, dict) or not d.get("id"):
             return {"list": []}
-        parts = []
-        for i, f in enumerate(files, 1):
-            title = re.sub(r"\.[^.]+$", "", f["name"]) or ("音轨%d" % i)
-            parts.append("%d %s$%s" % (i, title, f["path"]))
+
+        tags = ""
+        if isinstance(d.get("tags"), list):
+            names = []
+            for t in d["tags"]:
+                if isinstance(t, dict):
+                    nm = t.get("name") or ""
+                    if nm:
+                        names.append(nm)
+            tags = " ".join(names[:12])
+
         vod = {
             "vod_id": vid,
-            "vod_name": vid.split("/")[-1],
-            "vod_pic": "",
+            "vod_name": self._clean_title(d.get("title")),
+            "vod_pic": d.get("mainCoverUrl") or d.get("samCoverUrl") or "",
+            "vod_content": "社团: %s | 时长: %s | 价格: ¥%s\n发行: %s\n%s" % (
+                d.get("name") or "",
+                d.get("duration") or "?",
+                d.get("price") or "?",
+                d.get("release") or "?",
+                tags,
+            ),
+            "vod_year": (d.get("release") or "")[:4],
+            "vod_actor": d.get("name") or "",
             "vod_play_from": "ASMR",
-            "vod_play_url": "#".join(parts),
+            "vod_play_url": self._build_play_url(vid),
         }
         return {"list": [vod]}
 
+    def _build_play_url(self, vid):
+        """tracks 树 -> 收集 audio 节点 -> '第N集 标题$m4a直链#...'"""
+        d = self._get("/api/tracks/%s?v=2" % vid)
+        audio = []
+        if isinstance(d, list):
+            audio = self._collect_audio({"children": d})
+        if not audio:
+            return ""
+        parts = []
+        for i, a in enumerate(audio, 1):
+            title = self._clean_title(a.get("title")) or "音轨%d" % i
+            url = a.get("streamLowQualityUrl") or a.get("mediaStreamUrl") or ""
+            if not url:
+                continue
+            # 播放器对 m3u8 期望高；音频直链直接返回，播放器原生播放
+            parts.append("%02d %s$%s" % (i, title, url))
+        return "#".join(parts)
+
+    def _collect_audio(self, node):
+        out = []
+        if node.get("type") == "audio":
+            out.append(node)
+        for c in node.get("children") or []:
+            out.extend(self._collect_audio(c))
+        return out
+
     def playerContent(self, flag, id, vipFlags=None):
-        path = str(id)
-        if not path.startswith("/"):
+        # id 即直链 URL，直接返回
+        if not id or not str(id).startswith("http"):
             return {"parse": 0, "playUrl": ""}
-        d = self._post("/api/fs/get", {"path": path, "password": ""})
-        raw = ((d.get("data") or {}).get("raw_url")) or ""
-        if not raw:
-            return {"parse": 0, "playUrl": ""}
-        return {"parse": 0, "playUrl": raw, "header": {"User-Agent": UA}}
+        return {"parse": 0, "playUrl": str(id), "header": {"User-Agent": UA}}
