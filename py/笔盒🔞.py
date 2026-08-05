@@ -101,9 +101,7 @@ class Spider(BaseSpider):
     def _image_proxy_url(self, raw_url):
         if not raw_url or not isinstance(raw_url, str):
             return ""
-        if raw_url.startswith("http") and not raw_url.endswith(".txt"):
-            if any(raw_url.lower().endswith(ext) for ext in (".jpg", ".jpeg", ".png", ".webp", ".gif")):
-                return raw_url
+        # 修复: 所有图片统一走代理，确保带正确的 Referer / User-Agent
         encoded = base64.b64encode(raw_url.encode("utf-8")).decode("utf-8")
         proxy_base = self.getProxyUrl()
         if not proxy_base:
@@ -363,11 +361,11 @@ class Spider(BaseSpider):
 
             # 普通直链
             headers = {"User-Agent": _UA, "Referer": _HOST + "/"}
-            resp = self.session.get(img_url, headers=headers, stream=True, timeout=30)
+            resp = self.session.get(img_url, headers=headers, timeout=30)
             if resp.status_code != 200:
                 return [resp.status_code, "text/plain", b""]
             ct = resp.headers.get("Content-Type", "image/jpeg")
-            return [200, ct, resp.iter_content(chunk_size=1048576)]
+            return [200, ct, resp.content]
 
         except Exception as e:
             return [500, "text/plain", str(e).encode()]
