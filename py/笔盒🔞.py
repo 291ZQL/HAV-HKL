@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-笔盒(beabox) - TVBox Python爬虫适配版
-站点: https://bh5873.top
-"""
+
 import base64
 import gzip
 import html as _html
@@ -18,6 +15,8 @@ except ImportError:
     class BaseSpider:
         def getProxyUrl(self):
             return None
+        def getDependence(self):
+            return []
 
 try:
     import requests
@@ -31,6 +30,9 @@ except ImportError:
 
 __all__ = ["Spider"]
 
+# ═══════════════════════════════════════════════════
+# 常量
+# ═══════════════════════════════════════════════════
 _HOST = "https://bh5873.top"
 _API = _HOST + "/api"
 _AES_KEY = bytes([0xf6, 0x32, 0x2f, 0xa1, 0xc0, 0x64, 0x37, 0x0e, 0xa4, 0x0c, 0x8c, 0xdc, 0x20, 0x64, 0x9f, 0x8e])
@@ -39,8 +41,7 @@ _UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 S
 
 
 class Spider(BaseSpider):
-
-    filterable = False 
+    filterable = False
     searchable = True
 
     def getName(self):
@@ -55,11 +56,19 @@ class Spider(BaseSpider):
         })
         self.cache = {}
 
+    def getDependence(self):
+        return []
+
     def isVideoFormat(self, url):
         return bool(re.search(r"\.(?:m3u8|mp4|flv)", url, re.I))
 
     def manualVideoCheck(self):
         return False
+
+    # ═══════════════════════════════════════════════════
+    # AES-128-CBC 解密
+    # ═══════════════════════════════════════════════════
+
     def _aes_decrypt(self, hex_data):
         try:
             raw = bytes.fromhex(hex_data)
@@ -69,9 +78,12 @@ class Spider(BaseSpider):
             cipher = AES.new(_AES_KEY, AES.MODE_CBC, iv=iv)
             pt = unpad(cipher.decrypt(ct), 16)
             return pt.decode("utf-8")
-        except Exception as e:
-            print("[笔盒] AES解密失败:", e)
+        except Exception:
             return ""
+
+    # ═══════════════════════════════════════════════════
+    # API请求封装 (自动解密)
+    # ═══════════════════════════════════════════════════
 
     def _api(self, path, params=None, method="GET", body=None):
         url = _API + path
@@ -83,21 +95,23 @@ class Spider(BaseSpider):
             kwargs.setdefault("headers", {})["Content-Type"] = "application/json"
         try:
             resp = self.session.request(method, url, **kwargs)
-            if resp.status_code != 200:
-                print(f"[笔盒] HTTP错误: {resp.status_code} {url}")
+            # 修复: 接受 200-299 状态码 (parse-url 返回 201)
+            if not (200 <= resp.status_code < 300):
                 return {}
             j = resp.json()
             if j.get("code") != 200:
-                print(f"[笔盒] API错误: code={j.get('code')} msg={j.get('msg', '')}")
                 return {}
             enc = j.get("data", "")
             if not enc or not isinstance(enc, str) or len(enc) < 32:
                 return enc if isinstance(enc, (dict, list)) else {}
             dec = self._aes_decrypt(enc)
             return json.loads(dec) if dec else {}
-        except Exception as e:
-            print(f"[笔盒] 请求异常: {e} URL={url}")
+        except Exception:
             return {}
+
+    # ═══════════════════════════════════════════════════
+    # 图片代理URL生成
+    # ═══════════════════════════════════════════════════
 
     def _image_proxy_url(self, raw_url):
         if not raw_url or not isinstance(raw_url, str):
@@ -111,6 +125,10 @@ class Spider(BaseSpider):
             proxy_base = "http://127.0.0.1:9980/proxy?do=py"
         sep = "&" if "?" in proxy_base else "?"
         return proxy_base + sep + "type=bh_img&url=" + quote(encoded, safe="")
+
+    # ═══════════════════════════════════════════════════
+    # 视频项构建
+    # ═══════════════════════════════════════════════════
 
     def _clean_title(self, text):
         if not text:
@@ -126,6 +144,11 @@ class Spider(BaseSpider):
             "vod_pic": self._image_proxy_url(item.get("vodPic", "")),
             "vod_remarks": item.get("rating", ""),
         }
+
+    # ═══════════════════════════════════════════════════
+    # 首页
+    # ═══════════════════════════════════════════════════
+
     _CLASS_IDS = [
         "推荐", "最新", "国产精品", "黑丝巨乳", "学生空姐", "人妻少妇",
         "偷拍自拍", "无码流出", "动漫CG", "口交颜射", "SM调教",
@@ -153,26 +176,37 @@ class Spider(BaseSpider):
                 vods.append(self._make_item(item))
         return {"list": vods}
 
+    # ═══════════════════════════════════════════════════
+    # 分类
+    # ═══════════════════════════════════════════════════
+
     def categoryContent(self, tid, pg=1, filter=False, extend=None):
         page = max(1, int(pg))
         limit = 24
+
         if tid == "推荐":
             data = self._api("/vod/recommend", {"page": page, "limit": limit})
             vod_list = data.get("data", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+
         elif tid == "最新":
             data = self._api("/vod/latest", {"page": page, "limit": limit})
             vod_list = data.get("data", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+
         elif tid == "专题":
             return self._topic_folder_list(page, limit)
+
         elif tid.startswith("topic:"):
             return self._topic_videos(tid)
+
         else:
             data = self._api("/vod/search", {"keyword": tid, "page": page})
             vod_list = data.get("data", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+
         items = []
         for item in vod_list:
             items.append(self._make_item(item))
             self.cache[item.get("vodId", "")] = item
+
         return {
             "list": items,
             "page": page,
@@ -220,15 +254,21 @@ class Spider(BaseSpider):
             "pagecount": 1,
             "limit": len(items),
             "total": len(items),
-       }
-	   
+        }
+
+    # ═══════════════════════════════════════════════════
+    # 详情
+    # ═══════════════════════════════════════════════════
+
     def detailContent(self, ids):
         vod_id = str(ids[0]) if ids else ""
         if not vod_id:
             return {"list": []}
+
         detail = self._api("/vod/detail/" + vod_id)
         if not detail or not isinstance(detail, dict) or not detail.get("vodId"):
             return {"list": [{"vod_id": vod_id, "vod_name": "加载失败", "vod_pic": "", "vod_remarks": ""}]}
+
         vod_play_from = []
         vod_play_url = []
         play_source = detail.get("vodPlaySource", {})
@@ -240,13 +280,14 @@ class Spider(BaseSpider):
                 parts = []
                 for ep in episodes:
                     play_url = ep.get("playUrl") or ep.get("url", "")
-                    label = ep.get("flag", "")
+                    label = ep.get("flag", "") or "播放"
                     parts.append(label + "$" + play_url)
                 vod_play_url.append("#".join(parts))
 
         if not vod_play_from:
             vod_play_from = ["默认"]
             vod_play_url = [""]
+
         return {"list": [{
             "vod_id": vod_id,
             "vod_name": str(detail.get("vodName", "")).strip(),
@@ -257,33 +298,52 @@ class Spider(BaseSpider):
             "vod_remarks": detail.get("rating", ""),
             "vod_actor": "",
             "vod_director": "",
-            "vod_content": detail.get("vodContent", ""),   # 如有简介则展示
+            "vod_content": detail.get("vodContent", ""),
             "vod_play_from": "$$$".join(vod_play_from),
             "vod_play_url": "$$$".join(vod_play_url),
         }]}
 
+    # ═══════════════════════════════════════════════════
+    # 播放
+    # ═══════════════════════════════════════════════════
+
     def playerContent(self, flag, id, vipFlags=None):
         url = unquote(str(id))
+
         def _direct(u):
             return bool(re.search(r"\.(?:m3u8|mp4|flv)($|\?|&)", u, re.I))
 
         hdr = json.dumps({"User-Agent": _UA, "Referer": _HOST + "/"})
 
+        # 直链直接播放
         if _direct(url):
             return {"parse": 0, "playUrl": "", "url": url, "header": hdr}
+
+        # 尝试API解析 (修复: 现在能正确处理201状态码)
         try:
             parsed = self._api("/vod/parse-url", method="POST", body={
                 "playerFrom": flag or "",
                 "playUrl": url,
             })
             if isinstance(parsed, dict) and parsed.get("url"):
-                url = parsed["url"]
-        except Exception as e:
-            print("[笔盒] 解析失败:", e)
+                parsed_url = parsed["url"]
+                if _direct(parsed_url):
+                    return {"parse": 0, "playUrl": "", "url": parsed_url, "header": hdr}
+                # 如果解析后仍非直链，但URL变了，更新url继续尝试
+                if parsed_url != url:
+                    url = parsed_url
+        except Exception:
+            pass
 
         if _direct(url):
             return {"parse": 0, "playUrl": "", "url": url, "header": hdr}
-        return {"parse": 1, "playUrl": "", "url": url}
+
+        # 非直链，交给TVBox webview解析
+        return {"parse": 1, "playUrl": "", "url": url, "header": hdr}
+
+    # ═══════════════════════════════════════════════════
+    # 搜索
+    # ═══════════════════════════════════════════════════
 
     def searchContent(self, key, quick=False, pg=1):
         page = max(1, int(pg))
@@ -299,21 +359,28 @@ class Spider(BaseSpider):
             "limit": 20,
             "total": data.get("total", 0) if isinstance(data, dict) else len(items),
         }
-		
+
+    # ═══════════════════════════════════════════════════
+    # 本地代理 (图片解密)
+    # ═══════════════════════════════════════════════════
+
     def localProxy(self, param):
         try:
             ptype = param.get("type", "") if isinstance(param, dict) else ""
             if ptype != "bh_img":
-                return [404, "text/plain", b"not found", {}]
+                return [404, "text/plain", b"not found"]
 
             raw_url_b64 = param.get("url", "") if isinstance(param, dict) else ""
             if not raw_url_b64:
-                return [400, "text/plain", b"missing url", {}]
+                return [400, "text/plain", b"missing url"]
+
             raw_url_b64 = unquote(raw_url_b64)
             padding = 4 - len(raw_url_b64) % 4
             if padding != 4:
                 raw_url_b64 += "=" * padding
             img_url = base64.b64decode(raw_url_b64).decode("utf-8")
+
+            # 加密图片 (.txt) → gzip → XOR → data: URL → 图片bytes
             if img_url.endswith(".txt"):
                 headers = {
                     "User-Agent": _UA,
@@ -322,7 +389,8 @@ class Spider(BaseSpider):
                 }
                 resp = self.session.get(img_url, headers=headers, timeout=15)
                 if resp.status_code != 200:
-                    return [resp.status_code, "text/plain", b"image fetch failed", {}]
+                    return [resp.status_code, "text/plain", b"image fetch failed"]
+
                 raw = resp.content
                 if raw[:2] == b'\x1f\x8b':
                     raw = gzip.decompress(raw)
@@ -331,17 +399,18 @@ class Spider(BaseSpider):
                 text = xor_data.decode("utf-8", errors="ignore")
                 match = re.match(r'^data:([^;]+);base64,(.+)$', text, re.I)
                 if not match:
-                    return [500, "text/plain", b"decrypt failed", {}]
+                    return [500, "text/plain", b"decrypt failed"]
                 mime, b64 = match.groups()
                 img_bytes = base64.b64decode(b64)
-                return [200, mime, img_bytes, {"Content-Length": str(len(img_bytes))}]
+                return [200, mime, img_bytes]
+
+            # 普通直链
             headers = {"User-Agent": _UA, "Referer": _HOST + "/"}
             resp = self.session.get(img_url, headers=headers, stream=True, timeout=30)
             if resp.status_code != 200:
-                return [resp.status_code, "text/plain", b"", {}]
+                return [resp.status_code, "text/plain", b""]
             ct = resp.headers.get("Content-Type", "image/jpeg")
-            return [200, ct, resp.iter_content(chunk_size=1048576), {}]
+            return [200, ct, resp.iter_content(chunk_size=1048576)]
 
         except Exception as e:
-            print("[笔盒] 代理异常:", e)
-            return [500, "text/plain", str(e).encode(), {}]
+            return [500, "text/plain", str(e).encode()]
