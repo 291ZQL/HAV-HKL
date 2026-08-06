@@ -572,6 +572,18 @@
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/MiFun动漫.py"
 		},
         {
+			"key": "动漫巴士",
+			"name": "🐬[动漫]动漫巴士.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/动漫巴士.py"
+		},
+		{
+			"key": "短剧巴士",
+			"name": "🐬[短剧]短剧巴士.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/短剧巴士.py"
+		},
+        {
       "key": "cj_360资源",
       "name": "🐬[短剧]360",
       "type": 1,
