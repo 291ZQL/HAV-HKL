@@ -16,6 +16,9 @@ from base.spider import Spider
 
 class Spider(Spider):
 
+    # ------------------------------------------------------------------ #
+    # 基础配置
+    # ------------------------------------------------------------------ #
     def getName(self):
         return '短剧巴士'
 
@@ -32,30 +35,34 @@ class Spider(Spider):
         self.session = requests.Session()
         self.session.trust_env = False
         self.session.headers.update(self.headers)
+        # 图片 CDN 证书链不完整，统一关闭校验，同时屏蔽告警刷屏
         try:
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         except Exception:
             pass
 
+        # 父分类：27 为站点唯一的真实栏目(短剧)，label_* 为标签聚合页
         self.cate_manual = [
             ('短剧', '27'),
             ('男频爽剧', 'label_boy'),
             ('女频爽剧', 'label_girl'),
             ('热门推荐', 'label_hot'),
         ]
+        # 子分类(剧情标签)兜底，实际运行时会从 /list/27.html 动态抓取覆盖
         self.class_fallback = [
             '重生', '民国', '穿越', '年代', '现代', '言情', '反转', '爽文',
             '女恋', '总裁', '闪婚', '离婚', '都市', '脑洞', '古装', '仙侠',
         ]
-
-        self.from_names = [
+        # 播放源代号 -> 友好名称（单线路时播放页不渲染 tab，只能靠 from 字段）
+        self.from_names = {
             'bfzym3u8': '暴风', 'lzm3u8': '量子', 'ffm3u8': '非凡',
             'snm3u8': '闪电', 'tkm3u8': '天空', 'hnm3u8': '海纳',
             'jsm3u8': '极速', 'dbm3u8': '多宝', 'lem3u8': '乐视',
             'wjm3u8': '无尽', 'ukm3u8': '优酷', 'play': '默认',
         }
         self._filter_cache = None
+        # 站点搜索接口限频：两次搜索间隔需 >= 3 秒，否则返回"频繁操作"
         self._search_gap = 3.2
         self._search_lock = threading.Lock()
         self._last_search = 0.0
@@ -83,6 +90,9 @@ class Spider(Spider):
         html = self._get(self.host + '/')
         return {'list': self._parse_list(html)}
 
+    # ------------------------------------------------------------------ #
+    # 网络 / 工具
+    # ------------------------------------------------------------------ #
     def _get(self, url, retry=2):
         for i in range(retry + 1):
             try:
@@ -96,6 +106,10 @@ class Spider(Spider):
         return ''
 
     def _search_get(self, url, retry=2):
+        """
+        搜索接口有 3 秒限频，命中"频繁操作"会返回一个空壳页面。
+        这里串行化搜索请求并自动补足间隔 + 重试。
+        """
         with self._search_lock:
             for i in range(retry + 1):
                 wait = self._search_gap - (time.time() - self._last_search)
@@ -130,11 +144,16 @@ class Spider(Spider):
 
     @staticmethod
     def _max_page(html, pattern):
+        """从分页链接中取最大页码"""
         pages = [int(x) for x in re.findall(pattern, html or '')]
         return max(pages) if pages else 1
 
     @staticmethod
     def _seg_pagecount(html, route, seg_len, page_idx):
+        """
+        MacCMS 伪静态分页：/{route}/{s0}-{s1}-...-{sN}.html
+        直接按 '-' 切段取页码位，避免因为后续段(如 year)有值而漏匹配。
+        """
         pages = []
         for href in re.findall(r'/%s/([^"\'<>]+?)\.html' % route, html or ''):
             seg = href.split('-')
@@ -142,6 +161,9 @@ class Spider(Spider):
                 pages.append(int(seg[page_idx]))
         return max(pages) if pages else 1
 
+    # ------------------------------------------------------------------ #
+    # 列表解析（首页 / 分类 / 标签 / 搜索 共用同一套 img-list 结构）
+    # ------------------------------------------------------------------ #
     def _parse_list(self, html):
         videos = []
         if not html:
@@ -177,22 +199,29 @@ class Spider(Spider):
             })
         return videos
 
+    # ------------------------------------------------------------------ #
+    # 首页：父分类 + 子分类筛选器
+    # ------------------------------------------------------------------ #
     def homeContent(self, filter):
         result = {}
         classes = [{'type_id': tid, 'type_name': name} for name, tid in self.cate_manual]
         result['class'] = classes
+        # 部分空壳 APP 调用时不传 filter，这里始终下发筛选器
         result['filters'] = self._build_filters()
         result['list'] = self.homeVideoContent().get('list', [])
         return result
 
     def _fetch_classes(self):
+        """动态抓取 /list/27.html 侧栏中的子分类(剧情标签)"""
         html = self._get(self.host + '/list/27.html')
         names = []
+        # <li><a href="/show/27---%E9%87%8D%E7%94%9F--------.html" title="重生" >
         for enc, title in re.findall(
                 r'href="/show/27---([^-"]*)-{8}\.html"\s+title="([^"]*)"', html or ''):
             name = self._clean(title)
             if not name or name == '全部':
                 continue
+            # 站点个别导航链接带多余空格(如 "仙侠 ")会导致查不到数据，这里统一去空白
             raw = urllib.parse.unquote_plus(enc).strip()
             if raw and raw not in [v for _, v in names]:
                 names.append((name, raw))
@@ -221,10 +250,14 @@ class Spider(Spider):
             {'key': 'by', 'name': '排序', 'value': by_opts},
             {'key': 'year', 'name': '年份', 'value': year_opts},
         ]
+        # 只有 show 路由(栏目 27)支持筛选，label 标签页不支持
         filters = {'27': show_filters}
         self._filter_cache = filters
         return filters
 
+    # ------------------------------------------------------------------ #
+    # 分类内容 + 分页
+    # ------------------------------------------------------------------ #
     def categoryContent(self, tid, pg, filter, extend):
         try:
             pg = int(pg) if str(pg).isdigit() else 1
@@ -281,11 +314,16 @@ class Spider(Spider):
             return ''
         return urllib.parse.quote_plus(str(value).strip())
 
+    # ------------------------------------------------------------------ #
+    # 详情（含全部播放源 / 剧集）
+    # ------------------------------------------------------------------ #
     def detailContent(self, ids):
         vid = str(ids[0])
         html = self._get('%s/duanju/%s.html' % (self.host, vid))
         if not html:
             return {'list': []}
+
+        # 标题
         name = ''
         m = re.search(r'<div class="detail-title[^"]*"[^>]*>\s*<h1[^>]*>(.*?)</h1>', html, re.S)
         if m:
@@ -293,6 +331,8 @@ class Spider(Spider):
         if not name:
             m = re.search(r'<title>(.*?)</title>', html, re.S)
             name = self._clean(m.group(1)).split('-')[0].strip() if m else ''
+
+        # 封面
         pic = ''
         m = re.search(r'<div class="detail-pic[^"]*"[^>]*>\s*<img[^>]+data-original="([^"]+)"', html, re.S)
         if m:
@@ -300,6 +340,8 @@ class Spider(Spider):
         if not pic:
             m = re.search(r'data-original="(https?://[^"]+)"', html)
             pic = self._abs(m.group(1)) if m else ''
+
+        # 主角 / 分类 / 状态
         actor, vclass, remarks = '', '', ''
         for dt, dd in re.findall(r'<dt>(.*?)</dt>\s*<dd[^>]*>(.*?)</dd>', html, re.S):
             key = self._clean(dt).rstrip('：:')
@@ -310,11 +352,15 @@ class Spider(Spider):
                 vclass = val.replace(' ', ' / ')
             elif key in ('状态', '备注'):
                 remarks = val
+
+        # 简介
         content = ''
         m = re.search(r'<div class="content-info[^"]*"[^>]*>(.*?)</div>', html, re.S)
         if m:
             content = self._clean(m.group(1))
         content = re.sub(r'^《%s》\s*' % re.escape(name), '', content) if name else content
+
+        # 年份（站点部分条目写成"于0年上映"，此时退化用封面上传目录里的年份）
         year = ''
         m = re.search(r'((?:19|20)\d{2})年上映', content)
         if m:
@@ -344,6 +390,10 @@ class Spider(Spider):
         return {'list': [vod]}
 
     def _parse_plays(self, vid, detail_html):
+        """
+        详情页只渲染第 1 个播放源，播放页才有完整的多源 tab，
+        因此这里拉一次播放页拿全部源。
+        """
         play_from, play_url = [], []
         phtml = self._get('%s/djplay/%s-1-1.html' % (self.host, vid))
 
@@ -359,6 +409,7 @@ class Spider(Spider):
                 r'<div class="item[^"]*">\s*<div class="video_list[^"]*">(.*?)</div>',
                 boxes[0], re.S) if boxes else []
 
+            # 单线路时页面不渲染 tab 标签，用 player_aaaa 的 from 字段兜底命名
             alt = ''
             if not names:
                 fm = re.search(r'"from"\s*:\s*"([^"]*)"', phtml)
@@ -379,6 +430,7 @@ class Spider(Spider):
                 play_from.append(src)
                 play_url.append('#'.join(eps))
 
+        # 兜底：用详情页的单一线路
         if not play_from:
             box = re.search(
                 r'id="play_tab_box">\s*<div class="video_list[^"]*">(.*?)</div>',
@@ -402,6 +454,9 @@ class Spider(Spider):
             eps.append('%s$%s' % (t.replace('#', '').replace('$', ''), href))
         return eps
 
+    # ------------------------------------------------------------------ #
+    # 播放
+    # ------------------------------------------------------------------ #
     def playerContent(self, flag, id, vipFlags):
         header = {'User-Agent': self.ua, 'Referer': self.host + '/'}
         url = self._abs(id)
@@ -428,6 +483,8 @@ class Spider(Spider):
             real = real.replace('\\/', '/')
             if real.startswith('//'):
                 real = 'https:' + real
+            # 部分资源路径含中文(如 /video/yiyu/第1集/index.m3u8)，
+            # 播放器对非 ASCII 支持不一，统一做百分号编码
             try:
                 real = urllib.parse.quote(real, safe=":/?#[]@!$&'()*+,;=%~")
             except Exception:
@@ -436,6 +493,9 @@ class Spider(Spider):
             result['parse'] = 0 if self.isVideoFormat(real) else 1
         return result
 
+    # ------------------------------------------------------------------ #
+    # 搜索
+    # ------------------------------------------------------------------ #
     def searchContent(self, key, quick, pg='1'):
         try:
             pg = int(pg) if str(pg).isdigit() else 1
@@ -443,6 +503,7 @@ class Spider(Spider):
             pg = 1
         if pg < 1:
             pg = 1
+        # /search/{wd}-{1..9}-{10:page}-{11}-{12}-{13}.html  共 14 段
         seg = [''] * 14
         seg[0] = urllib.parse.quote_plus(key)
         seg[10] = str(pg)
