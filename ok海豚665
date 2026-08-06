@@ -90,12 +90,6 @@
 			"type": 3,
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/好剧屋.py"
 		},
-        {
-			"key": "韩剧巴士",
-			"name": "🐬[追剧]韩剧巴士.py",
-			"type": 3,
-			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/韩剧巴士.py"
-		},
 		{
 			"key": "奈非工厂",
 			"name": "🐬[追剧]奈非工厂.py",
