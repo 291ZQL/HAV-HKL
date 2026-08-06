@@ -78,6 +78,24 @@
 			"type": 3,
 			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/油管.py"
 		},
+        {
+			"key": "初见影视",
+			"name": "🐬[追剧]初见影视.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/初见影视.py"
+		},
+        {
+			"key": "好剧屋",
+			"name": "🐬[追剧]好剧屋.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/好剧屋.py"
+		},
+        {
+			"key": "韩剧巴士",
+			"name": "🐬[追剧]韩剧巴士.py",
+			"type": 3,
+			"api": "https://ghfast.top/https://raw.githubusercontent.com/FGBLH/HKL/refs/heads/main/py/韩剧巴士.py"
+		},
 		{
 			"key": "奈非工厂",
 			"name": "🐬[追剧]奈非工厂.py",
